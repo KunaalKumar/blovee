@@ -1,4 +1,6 @@
-address: <device address>
+addresses:
+  - <device 1 address>
+  - <device 2 address>
 characteristic_id: <characterstic uuid>
 # Currently unused.
 service_id: <service id> 

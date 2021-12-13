@@ -2,50 +2,61 @@
 """
 Script to control Govee H6072 lamps. 
 
-TODO: 1) Parse command line args for action.
-      2) Allow specifying different config files (instead of just "config.yaml").
-      3) Change address accept an array of addresses.
-      4) ^ Handle multiple addresses.
-      5) Add additonal commands.
+TODO: Add additonal commands.
 """
 
-import asyncio
 import pygatt
 from pygatt.backends.backend import BLEAddressType
 import yaml
+from actions import Actions
+import argparse
 
-OFF = bytearray(bytes.fromhex("3301000000000000000000000000000000000032"))
-ON = bytearray(bytes.fromhex("3301010000000000000000000000000000000033"))
+RETRY_COUNT: int = 3
 
-with open("config.yaml", "r") as stream:
-    """ 
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, required=False, default="config.yaml")
+parser.add_argument("action", type=Actions.from_string, choices=list(Actions))
+
+args = parser.parse_args()
+
+with open(args.config, "r") as stream:
+    """
     Populate vars through yaml.
     """
     try:
         settings = yaml.safe_load(stream)
-        address = settings["address"]
+        addresses = settings["addresses"]
         service_id = settings["service_id"]
         characteristic_id = settings["characteristic_id"]
     except yaml.YAMLError as exc:
         print(exc)
+        exit(1)
 
 
-async def main():
+def main(address: str, retry: int = 0):
     adapter = pygatt.GATTToolBackend()
     # TODO: Implement connection timeout handling.
+    if retry >= RETRY_COUNT:
+        print(
+            "Connection to %s could not be established after %d tries."
+            % (address, RETRY_COUNT)
+        )
+        exit(1)
     try:
         adapter.start()
-        print("Connecting..")
-        device = adapter.connect(address_type=BLEAddressType.random,
-                                 address=address)
-        print("Connected!")
-        device.char_write(uuid=characteristic_id, value=ON)
+        print("Connecting to %s" % address)
+        device = adapter.connect(address_type=BLEAddressType.random, address=address)
+        print("Connected to %s" % address)
+
+        device.char_write_handle(handle=0x14, value=args.action.get_bytes())
+        # device.char_write(uuid=characteristic_id, value=args.action.get_bytes())
+        device.disconnect()
+    except pygatt.exceptions.NotConnectedError:
+        print("[%d] Connection error, trying again..." % (retry + 1))
+        main(address, retry + 1)
     finally:
         adapter.stop()
 
 
-async def exec():
-    await main()
-
-
-asyncio.run(exec())
+for address in addresses:
+    main(address=address)
