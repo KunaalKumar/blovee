@@ -1,0 +1,12 @@
+{
+    "domain": "govee",
+    "name": "GOVEE",
+    "documentation": "",
+    "dependencies": [],
+    "codeowners": [],
+    "requirements": [
+        "requests"
+    ],
+    "iot_class": "cloud_polling",
+    "version": "0.1.0"
+}
