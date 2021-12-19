@@ -3,8 +3,7 @@ from homeassistant import config_entries, exceptions
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant, callback
 
-from blovee import Blovee
-
+from .blovee import Blovee
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ def validate_api_key(hass: HomeAssistant, user_input):
 @config_entries.HANDLERS.register(DOMAIN)
 class BloveeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLe
+    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
         errors = {}

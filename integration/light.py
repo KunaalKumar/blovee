@@ -8,8 +8,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.components.light import LightEntity
 
-from blovee import Blovee, BloveeDevice
-
+from .blovee import Blovee, BloveeDevice
 from .const import CONF_USE_ASSUMED_STATE, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigType,
                             async_add_entities: AddEntitiesCallback):
-    _LOGGER.debug("Setting up Govee (BL) lights")
+    _LOGGER.debug("Setting up Blovee lights")
     config = entry.data
     options = entry.options
     hub = hass.data[DOMAIN]["hub"]

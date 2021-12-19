@@ -1,14 +1,11 @@
-"""Govee H6072 integration."""
+"""Blovee integration."""
 import asyncio
 import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_API_KEY
 from homeassistant.exceptions import PlatformNotReady
-
-from blovee import Blovee
-
-
+from .blovee import Blovee
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,12 +15,14 @@ PLATFORMS = ["light"]
 
 def setup(hass, config):
     """This setup does nothing, we use the async setup."""
+    _LOGGER.info("Blovee setup called")
     hass.states.set("blovee.state", "setup called")
     return True
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Blovee component."""
+    _LOGGER.info("Blovee async setup called")
     hass.states.async_set("blovee.state", "async_setup called")
     hass.data[DOMAIN] = {}
     return True
@@ -31,6 +30,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Blovee from a config entry."""
+
+    _LOGGER.info("Blovee async setup entry called")
 
     # get vars from ConfigFlow/OptionsFlow
     config = entry.data
@@ -49,8 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     for component in PLATFORMS:
         hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+            hass.config_entries.async_forward_entry_setup(entry, component))
 
     return True
 
@@ -58,14 +58,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
 
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                _unload_component_entry(hass, entry, component)
-                for component in PLATFORMS
-            ]
-        )
-    )
+    unload_ok = all(await asyncio.gather(*[
+        _unload_component_entry(hass, entry, component)
+        for component in PLATFORMS
+    ]))
 
     if unload_ok:
         hub = hass.data[DOMAIN].pop("hub")
@@ -74,13 +70,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     return unload_ok
 
 
-def _unload_component_entry(
-    hass: HomeAssistant, entry: ConfigEntry, component: str
-) -> bool:
+def _unload_component_entry(hass: HomeAssistant, entry: ConfigEntry,
+                            component: str) -> bool:
     """Unload an entry for a specific component."""
     success = False
     try:
-        success = hass.config_entries.async_forward_entry_unload(entry, component)
+        success = hass.config_entries.async_forward_entry_unload(
+            entry, component)
     except ValueError:
         # probably ValueError: Config entry was never loaded!
         return success

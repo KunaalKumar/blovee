@@ -1,0 +1,22 @@
+{
+  "title": "Blovee",
+  "config": {
+    "abort": {
+      "already_configured": "Already configured. Only a single configuration possible."
+    },
+    "error": {
+      "cannot_connect": "Cannot connect. Is the API-Key correct and the internet connection working?",
+      "unknown": "Unknown Error."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "api_key": "API Key",
+          "delay": "Poll Interval"
+        },
+        "title": "Blovee",
+        "description": "Get your API Key from the Blovee Home App. For Details see https://github.com/LaggAt/hacs-govee/blob/master/README.md"
+      }
+    }
+  }
+}
