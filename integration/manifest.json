@@ -1,9 +1,10 @@
 {
-    "domain": "govee",
-    "name": "GOVEE",
+    "domain": "blovee",
+    "name": "BLOVEE",
     "documentation": "",
     "dependencies": [],
     "codeowners": [],
+    "config_flow": true,
     "requirements": [
         "requests"
     ],
