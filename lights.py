@@ -54,7 +54,7 @@ def main(address: str, retry: int = 0):
         device = adapter.connect(address_type=BLEAddressType.random, address=address)
         print("Connected to %s" % address)
 
-        # device.char_write_handle(handle=0x14, value=args.action.get_bytes())
+        device.char_write_handle(handle=0x14, value=args.action.get_bytes())
         # device.char_write(uuid=characteristic_id, value=args.action.get_bytes())
 
         # print("Reaading from handle")
@@ -62,11 +62,11 @@ def main(address: str, retry: int = 0):
         # print("Reaading from UUID")
         # print(device.char_read(uuid="00010203-0405-0607-0809-0a0b0c0d2b10"))
 
-        device.subscribe("00010203-0405-0607-0809-0a0b0c0d2b10", callback=handle_notif)
+        # device.subscribe("00010203-0405-0607-0809-0a0b0c0d2b10", callback=handle_notif)
 
-        while True:
-            time.sleep(1)
-            device.char_write_handle(handle=0x14, value=args.action.get_bytes())
+        # while True:
+        #     time.sleep(1)
+        #     device.char_write_handle(handle=0x14, value=args.action.get_bytes())
 
         device.disconnect()
     except pygatt.exceptions.NotConnectedError:
